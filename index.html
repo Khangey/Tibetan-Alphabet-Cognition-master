@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="bo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>བོད་ཀྱི་ཡི་གེ</title>
+    <style>
+        @font-face {
+            font-family: 'Qomolangma-Uchen Sarchung';
+            src: url('fonts/Qomolangma-Uchen Sarchung.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            display: grid;
+            grid-template-rows: min-content min-content 1fr min-content;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Qomolangma-Uchen Sarchung', sans-serif;
+            padding: min(2vh, 20px);
+            gap: min(2vh, 15px);
+        }
+
+        .title {
+            font-size: min(4vh, 32px);
+            text-align: center;
+            padding: 0 10px;
+            line-height: 1.2;
+        }
+
+        .instructions {
+            font-size: min(2.5vh, 16px);
+            text-align: center;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        #character {
+            font-size: min(45vh, 45vw);
+            text-align: center;
+            animation: fadeIn 0.1s;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .footer {
+            font-size: min(2vh, 14px);
+            text-align: center;
+            padding: min(1vh, 10px);
+            width: 100%;
+            line-height: 1.3;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="title">དཔལ་ཡོན་བོད་ཡིག་ཡིག་འབྲུ་ངོས་འཛིན།</div>
+    <div class="instructions">
+        མཐེབ་གཞོང་གི་གཡས་གཡོན་མཐེབ་གནོན་ནམ་ཙིག་རྟགས་ཀྱིས་ཡིག་འབྲུ་སྔ་ཕྱི་ལ་བརྗེ་སྒྱུར་བྱེད་ཐུབ།
+    </div>
+    <div class="main-content">
+        <div id="character"></div>
+    </div>
+    <div class="footer">
+        ©བོད་ལྗོངས་དཔལ་ཡོན་ཆ་འཕྲིན་ཚད་ཡོད་ཀུང་སི། བོདICPགྲ་སྒྲིག2023000237-2 | བཟོ་སྐྲུན་པ། ཁྱུང་བོ་གངས་རྒྱན། 
+    </div>
+
+    <script>
+        // 潘通转色色卡配色方案
+        const pantoneColors = [
+            '#FF6B6B',  // 珊瑚红 Living Coral
+            '#5F4B8B',  // 紫外光 Ultra Violet
+            '#88B04B',  // 草木绿 Greenery
+            '#92A8D1',  // 宁静蓝 Serenity
+            '#F7CAC9',  // 水晶粉 Rose Quartz
+            '#45B5AA',  // 绿松石 Turquoise
+            '#DD4124',  // 橘红色 Tangerine Tango
+            '#009B77',  // 翡翠绿 Emerald
+            '#5B5EA6',  // 雾霾蓝 Radiant Orchid
+            '#DFCFBE',  // 沙色 Sand Dollar
+            '#9B2335',  // 辣椒红 Chili Pepper
+            '#55B4B0',  // 青碧色 Aqua Sky
+            '#E15D44',  // 虎皮红 Tiger Lily
+            '#7FCDCD',  // 水蓝色 Aquamarine
+            '#C3447A'   // 紫红色 Magenta Purple
+        ];
+
+        // 获取随机潘通色
+        function getRandomPantoneColor() {
+            return pantoneColors[Math.floor(Math.random() * pantoneColors.length)];
+        }
+
+        // 基础字符（30个字母）
+        const basicChars = [
+            'ཀ', 'ཁ', 'ག', 'ང', 
+            'ཅ', 'ཆ', 'ཇ', 'ཉ',
+            'ཏ', 'ཐ', 'ད', 'ན',
+            'པ', 'ཕ', 'བ', 'མ',
+            'ཙ', 'ཚ', 'ཛ', 'ཝ',
+            'ཞ', 'ཟ', 'འ', 'ཡ',
+            'ར', 'ལ', 'ཤ', 'ས',
+            'ཧ', 'ཨ'
+        ];
+
+        // 叠字字符（上加字）
+        const stackedChars = [
+            // ར字头
+            'རྐ', 'རྒ', 'རྔ', 'རྗ', 'རྙ', 'རྟ', 'རྡ', 'རྣ', 'རྦ', 'རྨ', 'རྩ', 'རྫ',
+            // ལ字头
+            'ལྐ', 'ལྒ', 'ལྔ', 'ལྕ', 'ལྗ', 'ལྟ', 'ལྡ', 'ལྤ', 'ལྦ', 'ལྷ',
+            // ས字头
+            'སྐ', 'སྒ', 'སྔ', 'སྙ', 'སྟ', 'སྡ', 'སྣ', 'སྤ', 'སྦ', 'སྨ', 'སྩ'
+        ];
+
+        // 下缀字符
+        const subscriptChars = [
+            // 雅塔
+            'ཀྱ', 'ཁྱ', 'གྱ', 'པྱ', 'ཕྱ', 'བྱ', 'མྱ',
+            // 热塔
+            'ཀྲ', 'ཁྲ', 'གྲ', 'ཏྲ', 'ཐྲ', 'དྲ', 'པྲ', 'ཕྲ', 'བྲ', 'མྲ', 'སྲ', 'ཧྲ',
+            // 拉塔
+            'ཀླ', 'གླ', 'བླ', 'ཟླ', 'རླ', 'སླ',
+            // 瓦塔
+            'ཀྭ', 'ཁྭ', 'གྭ', 'ཉྭ', 'དྭ', 'ཙྭ', 'ཚྭ', 'ཞྭ', 'ཟྭ', 'རྭ', 'ལྭ', 'ཤྭ', 'སྭ', 'ཧྭ'
+        ];
+
+        // 带元音组合字符
+        const vowelChars = [
+            // 基础元音
+            'ཨི', 'ཨུ', 'ཨེ', 'ཨོ',
+            // 复合元音
+            'ཨཱི', 'ཨཱུ', 'ཨཻ', 'ཨཽ'
+        ];
+
+        // 梵文字符组合
+        const sanskritChars = [
+            'ཀྵ', 'ཛྷ', 'ཊ', 'ཋ', 'ཌ', 'ཎ', 
+            'ཥ', 'ཀྐ', 'ཏྟ', 'པྤ'
+        ];
+
+        // 藏文数字
+        const numberChars = [
+            '༠', '༡', '༢', '༣', '༤', 
+            '༥', '༦', '༧', '༨', '༩'
+        ];
+
+        // 藏文特殊符号
+        const specialChars = [
+            '༄', '༅', '༆', '༇', '༈', 
+            '༉', '༊', '་', '༌', '།', 
+            '༎', '༏', '༐', '༑', '༒', 
+            '༔', '༴', '྅', '࿐', '࿑'
+        ];
+
+        // 合并所有字符
+        const tibetanChars = [
+            ...basicChars,      // 基础字符
+            ...stackedChars,    // 叠字字符
+            ...subscriptChars,  // 下缀字符
+            ...vowelChars,      // 带元音组合字符
+            ...sanskritChars,   // 梵文字符
+            ...numberChars,     // 藏文数字
+            ...specialChars     // 特殊符号
+        ];
+
+        let currentIndex = 0;
+        const charElement = document.getElementById('character');
+
+        function showNextChar() {
+            charElement.style.animation = 'none';
+            charElement.offsetHeight;
+            charElement.style.animation = 'fadeIn 0.1s';
+            charElement.textContent = tibetanChars[currentIndex];
+            charElement.style.color = getRandomPantoneColor();
+        }
+
+        function nextChar() {
+            currentIndex = (currentIndex + 1) % tibetanChars.length;
+            showNextChar();
+        }
+
+        function prevChar() {
+            currentIndex = (currentIndex - 1 + tibetanChars.length) % tibetanChars.length;
+            showNextChar();
+        }
+
+        // 初始显示
+        showNextChar();
+
+        // 点击事件
+        charElement.addEventListener('click', nextChar);
+
+        // 键盘事件
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space' || event.code === 'ArrowRight') {
+                nextChar();
+            } else if (event.code === 'ArrowLeft') {
+                prevChar();
+            }
+        });
+    </script>
+</body>
+</html>
